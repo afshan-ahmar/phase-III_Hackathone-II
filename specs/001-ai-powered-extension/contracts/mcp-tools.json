@@ -1,0 +1,320 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MCP Tool Contracts",
+  "description": "JSON Schema definitions for all MCP tools used by the AI agent",
+  "definitions": {
+    "create_todo": {
+      "type": "object",
+      "description": "Creates a new todo item",
+      "input": {
+        "type": "object",
+        "required": ["title", "user_id"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Title of the todo"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "Optional detailed description"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User who owns this todo"
+          },
+          "scheduled_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Optional scheduled date/time"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "required": ["success", "todo_id"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          },
+          "todo_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the created todo"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the created todo"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the todo was created"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message if success is false"
+          }
+        }
+      }
+    },
+    "update_todo": {
+      "type": "object",
+      "description": "Updates an existing todo item",
+      "input": {
+        "type": "object",
+        "required": ["todo_id", "user_id"],
+        "properties": {
+          "todo_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the todo to update"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User who owns this todo (for authorization)"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "New title (optional)"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "New description (optional)"
+          },
+          "completed": {
+            "type": "boolean",
+            "description": "Completion status (optional)"
+          },
+          "scheduled_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "New scheduled date/time (optional)"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          },
+          "todo_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the updated todo"
+          },
+          "updated_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of fields that were updated"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message if success is false"
+          }
+        }
+      }
+    },
+    "delete_todo": {
+      "type": "object",
+      "description": "Deletes a todo item",
+      "input": {
+        "type": "object",
+        "required": ["todo_id", "user_id"],
+        "properties": {
+          "todo_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the todo to delete"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User who owns this todo (for authorization)"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          },
+          "todo_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the deleted todo"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message if success is false"
+          }
+        }
+      }
+    },
+    "list_todos": {
+      "type": "object",
+      "description": "Lists todos for a user with optional filtering",
+      "input": {
+        "type": "object",
+        "required": ["user_id"],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User whose todos to list"
+          },
+          "completed": {
+            "type": "boolean",
+            "description": "Filter by completion status (optional)"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "description": "Maximum number of todos to return"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Number of todos to skip (for pagination)"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "required": ["success", "todos"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          },
+          "todos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "completed": {
+                  "type": "boolean"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "scheduled_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            "description": "Array of todo items"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total number of todos matching the filter"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message if success is false"
+          }
+        }
+      }
+    },
+    "get_todo_by_id": {
+      "type": "object",
+      "description": "Retrieves a specific todo by ID",
+      "input": {
+        "type": "object",
+        "required": ["todo_id", "user_id"],
+        "properties": {
+          "todo_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the todo to retrieve"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User who owns this todo (for authorization)"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          },
+          "todo": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "completed": {
+                "type": "boolean"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "scheduled_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "description": "The requested todo item"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message if success is false"
+          }
+        }
+      }
+    }
+  }
+}

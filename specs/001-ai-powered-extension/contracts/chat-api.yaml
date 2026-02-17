@@ -1,0 +1,163 @@
+openapi: 3.0.3
+info:
+  title: AI Powered ToDo ChatBot API
+  description: Conversational AI interface for managing todos using natural language
+  version: 1.0.0
+  contact:
+    name: Phase-III Development Team
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+paths:
+  /chat:
+    post:
+      summary: Send message to AI chatbot
+      description: |
+        Stateless endpoint that accepts user messages, reconstructs conversation context
+        from database, processes through AI agent, invokes MCP tools as needed, and
+        returns response with full traceability.
+      operationId: sendChatMessage
+      tags:
+        - Chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+            examples:
+              createTodo:
+                summary: Create a new todo
+                value:
+                  user_id: "550e8400-e29b-41d4-a716-446655440000"
+                  conversation_id: "660e8400-e29b-41d4-a716-446655440001"
+                  message: "Add a task to complete math homework tomorrow at 5pm"
+              listTodos:
+                summary: List pending todos
+                value:
+                  user_id: "550e8400-e29b-41d4-a716-446655440000"
+                  conversation_id: "660e8400-e29b-41d4-a716-446655440001"
+                  message: "Show my pending tasks"
+      responses:
+        '200':
+          description: Successful response with AI agent output
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+              examples:
+                todoCreated:
+                  summary: Todo created successfully
+                  value:
+                    agent_response: "I've created a new todo for you: 'complete math homework' scheduled for tomorrow at 5pm."
+                    invoked_tool: "create_todo"
+                    tool_result:
+                      success: true
+                      todo_id: "770e8400-e29b-41d4-a716-446655440002"
+                      title: "complete math homework"
+                      scheduled_at: "2026-02-12T17:00:00Z"
+                    conversation_state:
+                      conversation_id: "660e8400-e29b-41d4-a716-446655440001"
+                      message_count: 2
+                todosList:
+                  summary: Todos listed successfully
+                  value:
+                    agent_response: "You have 3 pending tasks: 1) Complete math homework (due tomorrow at 5pm), 2) Go to gym, 3) Attend team meeting."
+                    invoked_tool: "list_todos"
+                    tool_result:
+                      success: true
+                      todos:
+                        - id: "770e8400-e29b-41d4-a716-446655440002"
+                          title: "complete math homework"
+                          completed: false
+                        - id: "770e8400-e29b-41d4-a716-446655440003"
+                          title: "go to gym"
+                          completed: false
+                    conversation_state:
+                      conversation_id: "660e8400-e29b-41d4-a716-446655440001"
+                      message_count: 4
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - user_id
+        - conversation_id
+        - message
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the user
+        conversation_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the conversation (create new UUID for new conversations)
+        message:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: User's natural language message
+
+    ChatResponse:
+      type: object
+      required:
+        - agent_response
+        - conversation_state
+      properties:
+        agent_response:
+          type: string
+          description: Natural language response from AI agent
+        invoked_tool:
+          type: string
+          nullable: true
+          description: Name of MCP tool invoked (if any)
+        tool_result:
+          type: object
+          nullable: true
+          description: Result returned from MCP tool (if any)
+        conversation_state:
+          type: object
+          required:
+            - conversation_id
+            - message_count
+          properties:
+            conversation_id:
+              type: string
+              format: uuid
+            message_count:
+              type: integer
+              description: Total number of messages in conversation
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          description: Additional error details

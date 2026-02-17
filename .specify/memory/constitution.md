@@ -1,55 +1,55 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+Version change: N/A (initial) → 1.0.0 (Phase III update)
+Modified principles: None (new principles added)
+Added sections: Agent-First Architecture, Stateless Execution, Tool-Mediated Action, Deterministic Side Effects, Clear Separation of Concerns
+Removed sections: None
+Templates requiring updates: ✅ .specify/templates/plan-template.md, ✅ .specify/templates/spec-template.md, ✅ .specify/templates/tasks-template.md
+Follow-up TODOs: None
+-->
+# AI POWERED ToDo ChatBot Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Agent-First Architecture
+AI agents reason, decide, and invoke tools. The system is designed around intelligent agents that make decisions and orchestrate actions through well-defined interfaces rather than direct imperative control.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Stateless Execution
+Server holds no in-memory session state. Conversation context must be reconstructed from stored history on every request. This ensures horizontal scalability and fault tolerance across all service instances.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### Tool-Mediated Action
+Agents may only effect data via MCP tools. All AI actions must occur through MCP tools, and MCP tools must be stateless and persist all changes to the database. Agents must not directly access the databases.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Deterministic Side Effects
+All agent actions must be traceable and persisted. Every action taken by the AI system must have deterministic, auditable outcomes that can be traced back to specific inputs and decisions.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### Clear Separation of Concerns
+Clear separation between Agent logic, tool execution, and UI layers. Each layer has distinct responsibilities with well-defined interfaces, ensuring maintainability and testability.
 
-### [PRINCIPLE_6_NAME]
+### MCP Tool Compliance
+All AI actions must occur through MCP tools with explicit schemas. Tool inputs and outputs must follow explicit schemas. Chat endpoint must be stateless and REST-based for conversation and message history management.
 
+## Additional Constraints
 
-[PRINCIPLE__DESCRIPTION]
+### API Compatibility
+Existing Phase-2 APIs and database models must not be broken. All new functionality must maintain backward compatibility with existing interfaces and data structures.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### No Manual Coding
+Implementation must occur through MCP tools only. No manual coding is allowed - all changes must be made through the designated MCP tooling infrastructure.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Development Workflow
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### Natural Language Interface
+Users must be able to manage todos using natural language. The AI chatbot must correctly interpret user intent and translate it into appropriate tool invocations.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### Horizontal Scalability
+System must remain stateless and horizontally scalable. This ensures the application can handle varying loads by adding or removing instances as needed.
+
+### Task Execution
+All tasks must occur via MCP tools only. The system must be fully reviewable with proper specs, plan, and iteration documentation maintained.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+All development must follow the Agent-First Architecture principles. Every change must be implemented through MCP tools, maintain statelessness, and preserve existing API compatibility. Code reviews must verify compliance with all constitutional principles. The system must support natural language interaction with the AI chatbot while maintaining horizontal scalability.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-02-11 | **Last Amended**: 2026-02-11
